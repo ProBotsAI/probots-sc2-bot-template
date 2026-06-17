@@ -13,6 +13,10 @@ import random
 
 from bot import CompetitiveBot
 from config import BOT_NAME, BOT_RACE, MAP_POOL, MAP_PATH, OPPONENT_RACE, OPPONENT_DIFFICULTY, REALTIME
+
+# Validation mixin for workshop checkpoints
+# Usage: python run.py --validate
+from tests.zerg_rush_validator import ZergRushValidator
 from sc2.data import Race, Difficulty
 
 
@@ -104,6 +108,8 @@ def parse_arguments():
                        help=f"Computer difficulty (VeryEasy to VeryHard). Default: {OPPONENT_DIFFICULTY}")
     parser.add_argument("--realtime", action='store_true', default=REALTIME,
                        help=f"Play in realtime. Default: {REALTIME}")
+    parser.add_argument("--validate", action='store_true', default=False,
+                       help="Run Zerg Rush validation during the game. Prints a milestone report at game end.")
     parser.add_argument("--sc2-version", type=str, help="Starcraft 2 game version (optional)")
 
     args, unknown_args = parser.parse_known_args()
@@ -120,8 +126,28 @@ def parse_arguments():
 
 def load_bot(args):
     """Initialize and configure the bot."""
-    # Create bot instance
-    bot = CompetitiveBot()
+    # If --validate flag is set, dynamically mix ZergRushValidator into
+    # CompetitiveBot so the validation report prints at game end.
+    if args.validate:
+        class ValidatedCompetitiveBot(ZergRushValidator, CompetitiveBot):
+            """CompetitiveBot with ZergRushValidator mixed in at runtime."""
+
+            async def on_step(self, iteration: int):
+                await ZergRushValidator.on_step(self, iteration)
+                await CompetitiveBot.on_step(self, iteration)
+
+            async def on_start(self):
+                await ZergRushValidator.on_start(self)
+                await CompetitiveBot.on_start(self)
+
+            async def on_end(self, game_result):
+                await ZergRushValidator.on_end(self, game_result)
+                await CompetitiveBot.on_end(self, game_result)
+
+        bot = ValidatedCompetitiveBot()
+        print("Zerg Rush validation ENABLED — report will print at game end.")
+    else:
+        bot = CompetitiveBot()
 
     # Convert string race to Race enum
     try:
