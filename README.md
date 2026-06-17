@@ -11,7 +11,7 @@ A template for creating StarCraft 2 AI bots using the [python-sc2](https://githu
 - Support for custom maps and AI opponents
 - Ready-to-use bot structure
 - Built-in milestone validation (`--validate`)
-- Upgradable to ARES framework
+- Upgradable to Ares framework
 
 ## Quick Start
 
@@ -81,20 +81,20 @@ Edit `config.py` to customize:
 
 ## Validating Your Progress
 
-The template includes a built-in validator that checks your bot against workshop milestones. If you're following the [Zerg Rush Bot Workshop](https://subscribe.versusai.net/zerg-rush), run:
+The template includes a built-in validator that checks your bot against Zerg Rush milestones:
 
 ```bash
 python run.py --validate
 ```
 
-This prints a milestone report at game end showing which steps you've completed across 4 stages:
+This prints a report at game end showing which steps you've completed across 4 stages:
 
 1. **Economy Foundation** — 16 workers, extractor, no supply blocks
 2. **The Rush Core** — Spawning Pool at supply 11–14, Zerglings after pool
 3. **The Speed Advantage** — Queen, Metabolic Boost after pool
 4. **Attack** — Zerglings sent to enemy base
 
-> The validator is tuned for the Zerg Rush build. For guided instructions and detailed explanations of each milestone, see the [workshop module on VersusAI](https://subscribe.versusai.net/zerg-rush).
+The validator is tuned for the Zerg Rush build. For step-by-step instructions that walk you through each milestone, see the [Zerg Rush Bot Workshop](https://subscribe.versusai.net/zerg-rush).
 
 ## Customizing Your Bot
 
@@ -109,13 +109,13 @@ As you add features, keep all new code files in the `bot/` folder — it's inclu
 
 ## Upgrading to Ares Framework
 
-Ares-sc2 extends python-sc2 with advanced tools for more sophisticated bot behavior.
+Ares-sc2 extends python-sc2 with advanced tools for more sophisticated bot behavior. To migrate your bot:
 
 ```bash
 python upgrade_to_ares.py
 ```
 
-The main change: your bot inherits from `AresBot` instead of `BotAI`, and you add `super()` calls to any hook methods you use. See the full details in `upgrade_to_ares.py`.
+The main change is that your bot inherits from `AresBot` instead of `BotAI`, and you add `super()` calls to any hook methods you use. For the full migration guide, see [Migrating to Ares](https://aressc2.github.io/ares-sc2/tutorials/migrating.html).
 
 ## Competing with Your Bot
 
